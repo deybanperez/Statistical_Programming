@@ -9,9 +9,12 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.align = "center")
-library(tidyr)
-library(dplyr)
-library(lubridate)
+rm(list = ls())
+source("functions.r")
+InstallLoadPackages("tidyr")
+InstallLoadPackages("dplyr")
+InstallLoadPackages("lubridate")
+
 ```
 
 
