@@ -1,0 +1,59 @@
+---
+title: "Most Harmful and Economic Weather Events Between 1950 and 2011 in USA"
+author: "Deyban Pérez"
+date: "February 22, 2018"
+output: 
+  pdf_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = "center")
+library(tidyr)
+library(dplyr)
+library(lubridate)
+```
+
+
+## Data Processing
+
+The [data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2) used is extracted from U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database who has the mainly weather events ocurred from 1950 to 2011.
+
+```{r load_data, cache=TRUE}
+
+if(!file.exists("./Data/dataset.bz2"))
+{
+  data_url = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+  dir.create(path = "./Data")
+  data = download.file(data_url, "./Data/dataset.bz2", method = "libcurl")
+}
+
+dataset = read.csv("./Data/dataset.bz2", sep = ",")
+```
+
+Takes a long of time to the dataset be loaded, that is the reasen why this chunk of code is marked as cache =  TRUE. Acoordying with the [documentation](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf) especifically pages 5-15 the columns of interest related to the assigment that envolves: harmful, economic expenses and event type, we just need the following columns from the dataset:
+
+1. STATE__: int, state ID
+2. BGN_DATE: date, beginning date of the event
+3. FATALITIES: int, number of people who dead
+4. INJURIES: int, number of people who suffered an injury
+5. PROPDMG: double, property damages quantity
+6. PROPDMGEXP: char, K (thousand), M (million), B (billion)
+7. CROPDMG: double, crop damages quantity
+8. CROPDMGEXP: char, K (thousand), M (million), B (billion)
+
+```{r}
+dataset = as.tbl(dataset)
+dataset = select(dataset, STATE__:BGN_DATE, FATALITIES:CROPDMGEXP)
+dataset$BGN_DATE = parse_date_time(dataset$BGN_DATE, orders = c("mdyHMS"))
+dataset$STATE__ = as.factor(dataset$STATE__)
+dataset = arrange(dataset, BGN_DATE)
+
+glimpse(dataset)
+str(dataset)
+dim(dataset)
+names(dataset)
+```
+
+## Results
+
